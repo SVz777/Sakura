@@ -34,28 +34,28 @@ class Model(dict, metaclass=ModelMetaclass):
             return
         if self.__primary__ not in self:
             raise SakuraException('primary key is empty')
-        and_cond = [
+        cond = [[
             [self.__primary__, '=', self[self.__primary__]]
-        ]
+        ]]
         field_value = dict(self)
         field_value.pop(self.__primary__)
-        return self.connection.update(self.__class__, field_value, and_cond)
+        return self.connection.update(self.__class__, field_value, cond)
 
     def Delete(self):
         if self.__primary__ not in self:
             raise SakuraException('primary key is empty')
-        and_cond = [
+        cond = [[
             [self.__primary__, '=', self[self.__primary__]]
-        ]
-        return self.connection.delete(self.__class__, and_cond)
+        ]]
+        return self.connection.delete(self.__class__, cond)
 
     def Get(self):
-        and_cond = [
+        cond = [[
             [k, '=', v] for k, v in self.items()
-        ]
-        info = self.connection.select_one(self.__class__, and_cond)
+        ]]
+        info = self.connection.select_one(self.__class__, cond)
         self.update(info)
 
     @classmethod
-    def Fetch(cls, and_cond):
-        return cls.connection.select(cls, and_cond)
+    def Fetch(cls, cond):
+        return cls.connection.select(cls, cond)

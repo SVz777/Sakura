@@ -6,7 +6,7 @@ from .log import logger
 
 class SakuraMysql:
     def __init__(self, *args, **kwargs) -> None:
-        self.conn = pymysql.connect(*args, **kwargs)
+        self.conn =  pymysql.connect(*args, **kwargs)
         self.debug = False
 
     def _sql(self, query, args):
@@ -38,9 +38,9 @@ class SakuraMysql:
         except Exception as e:
             raise SakuraException(e)
 
-    def update(self, model, field_value, and_cond=None, or_cond=None):
+    def update(self, model, field_value, cond=None):
         _field_value, _args1 = SqlUtil.get_field_value(field_value)
-        _where, _args2 = SqlUtil.get_where(and_cond, or_cond)
+        _where, _args2 = SqlUtil.get_where(cond)
         _args = _args1 + _args2
         _sql = SqlUtil.format_sql(
             [
@@ -61,8 +61,8 @@ class SakuraMysql:
         except Exception as e:
             raise SakuraException(e)
 
-    def delete(self, model, and_cond=None, or_cond=None):
-        _where, _args = SqlUtil.get_where(and_cond, or_cond)
+    def delete(self, model, cond=None):
+        _where, _args = SqlUtil.get_where(cond)
         _sql = SqlUtil.format_sql(
             [
                 'DELETE FROM',
@@ -82,11 +82,11 @@ class SakuraMysql:
         except Exception as e:
             raise SakuraException(e)
 
-    def select(self, model, and_cond=None, or_cond=None, group_by=None, order_by=None, limit=100, fields=None):
+    def select(self, model, cond=None, group_by=None, order_by=None, limit=100, fields=None):
         _fields = SqlUtil.get_fields(fields)
         if not fields:
             fields = model.__mappings__
-        _where, _args = SqlUtil.get_where(and_cond, or_cond)
+        _where, _args = SqlUtil.get_where(cond)
         _group_by = SqlUtil.get_groupby(group_by)
         _order_by = SqlUtil.get_orderby(order_by)
         _limit = SqlUtil.get_limit(limit)
@@ -115,10 +115,10 @@ class SakuraMysql:
         except Exception as e:
             raise SakuraException(e)
 
-    def select_one(self, model, and_cond=None, or_cond=None, group_by=None, order_by=None, fields=None):
+    def select_one(self, model, cond=None, group_by=None, order_by=None, fields=None):
         if self.debug:
             print('select_one')
-        models = self.select(model, and_cond, or_cond, group_by, order_by, 1, fields)
+        models = self.select(model, cond, group_by, order_by, 1, fields)
         if models:
             return models[0]
         return {}

@@ -25,7 +25,7 @@ class SqlUtil:
         raise SakuraException('field_value is empty')
 
     @staticmethod
-    def get_where(and_cond=None, or_cond=None):
+    def get_where(cond=None):
         """
         cond:[and_cond,or_cond]
         cond:[#or
@@ -39,7 +39,6 @@ class SqlUtil:
 
         ]
         """
-        cond = [i for i in [and_cond, or_cond] if i]
         if not cond:
             return '', []
         args = []

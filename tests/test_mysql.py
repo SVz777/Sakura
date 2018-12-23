@@ -41,16 +41,18 @@ class TestMysql(unittest.TestCase):
             'f1': 2,
             'f2': 'qwe',
             'f3': 3.4
-        }, [['id', '=', 1]], [['id', '=', 2]])
+        }, [[['id', '=', 1]],[['id', '=', 2]]])
         self.assertEqual(sql, f"UPDATE `{self.test.__table__}` SET `id` = 1, `f1` = 2, `f2` = 'qwe', `f3` = 3.4 WHERE `id` = 1 OR `id` = 2")
 
     def test_delete(self):
-        sql = self.sakura.delete(self.test, [['id', '=', 1]], [['id', '=', 2]])
+        sql = self.sakura.delete(self.test, [[['id', '=', 1]], [['id', '=', 2]]])
         self.assertEqual(sql, f"DELETE FROM `{self.test.__table__}` WHERE `id` = 1 OR `id` = 2")
 
     def test_select(self):
-        sql = self.sakura.select(self.test, [['id', '=', 1]], [['id', '=', 2]], ['f1', 'f2'], ['id'], 5, ['id', 'f1'])
+        sql = self.sakura.select(self.test, [[['id', '=', 1]], [['id', '=', 2]]], ['f1', 'f2'], ['id'], 5, ['id', 'f1'])
         self.assertEqual(sql, f"SELECT `id`, `f1` FROM `{self.test.__table__}` WHERE `id` = 1 OR `id` = 2 GROUP BY `f1`, `f2` ORDER BY `id` LIMIT 5")
+        sql = self.sakura.select(self.test, [[['id', '=', 1], ['id', '=', 2]], [['id', '=', 3]]], ['f1', 'f2'], ['id'], 5, ['id', 'f1'])
+        self.assertEqual(sql, f"SELECT `id`, `f1` FROM `{self.test.__table__}` WHERE `id` = 1 AND `id` = 2 OR `id` = 3 GROUP BY `f1`, `f2` ORDER BY `id` LIMIT 5")
 
 
 class TestSqlUtil(unittest.TestCase):
