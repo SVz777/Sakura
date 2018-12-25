@@ -57,5 +57,5 @@ class Model(dict, metaclass=ModelMetaclass):
         self.update(info)
 
     @classmethod
-    def Fetch(cls, cond):
+    def Fetch(cls, cond=None):
         return cls.connection.select(cls, cond)
