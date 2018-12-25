@@ -19,10 +19,10 @@ class TestMysql(unittest.TestCase):
         self.sakura.debug = True
 
         class Test(Model):
-            id = BigIntField('id')
-            f1 = BigIntField('f1')
-            f2 = VarcharField('f2', 50)
-            f3 = DoubleField('f3')
+            id = BigIntField()
+            f1 = BigIntField()
+            f2 = VarcharField(50)
+            f3 = DoubleField()
 
         self.test = Test
 
