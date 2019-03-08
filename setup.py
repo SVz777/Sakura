@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='SakuraMysql',
-    version='0.1.2',
+    version='0.1.3',
     description=(
         'mysql orm'
     ),
