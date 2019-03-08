@@ -27,13 +27,13 @@ class BaseIntField(Field):
 
 
 class BigIntField(BaseIntField):
-    def __init__(self, *args, **kwargs):
-        super().__init__('bigint', int, *args, **kwargs)
+    def __init__(self, length, *args, **kwargs):
+        super().__init__(f'bigint({length})', int, *args, **kwargs)
 
 
 class TinyIntField(BaseIntField):
-    def __init__(self, *args, **kwargs):
-        super().__init__('tinyint', int, *args, **kwargs)
+    def __init__(self, length, *args, **kwargs):
+        super().__init__(f'tinyint({length})', int, *args, **kwargs)
 
 
 class BaseFloatField(Field):
@@ -43,10 +43,10 @@ class BaseFloatField(Field):
 
 
 class FloatField(BaseFloatField):
-    def __init__(self, *args, **kwargs):
-        super().__init__('float', float, *args, **kwargs)
+    def __init__(self, length, *args, **kwargs):
+        super().__init__(f'float({length})', float, *args, **kwargs)
 
 
 class DoubleField(BaseFloatField):
-    def __init__(self, *args, **kwargs):
-        super().__init__('double', float, *args, **kwargs)
+    def __init__(self, length, *args, **kwargs):
+        super().__init__(f'double({length})', float, *args, **kwargs)

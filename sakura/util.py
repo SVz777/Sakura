@@ -1,4 +1,7 @@
+import re
+
 from .exception import SakuraException
+from . import fields
 
 
 class SqlUtil:
@@ -85,3 +88,18 @@ class SqlUtil:
     @staticmethod
     def format_sql(sql):
         return ' '.join([i for i in sql if i])
+
+    @staticmethod
+    def getField(field_type: str):
+        if field_type.lower().startswith('bigint'):
+            field = fields.BigIntField
+        elif field_type.lower().startswith('varchar'):
+            field = fields.VarcharField
+        elif field_type.lower().startswith('float'):
+            field = fields.FloatField
+        elif field_type.lower().startswith('double'):
+            field = fields.DoubleField
+        else:
+            raise NotImplementedError(f'this type todo:{field_type}')
+        length = re.search(r'\((\d+)\)', field_type).group(1)
+        return field, length

@@ -3,6 +3,7 @@ import pymysql
 from .util import SqlUtil
 from .exception import SakuraException
 from .log import logger
+from .models import Model
 
 class SakuraMysql:
     def __init__(self, *args, **kwargs) -> None:
@@ -150,6 +151,16 @@ class SakuraMysql:
             return cur.fetchall()
         except Exception as e:
             raise SakuraException(e)
+
+    def getModel(self,tablename):
+        fields = {
+            'connection': self
+        }
+        for i in (self.execute(f'show full columns from {tablename}')):
+            field_name, field_type, _, _, primary, *_ = i
+            Field, length = SqlUtil.getField(field_type)
+            fields[field_name] = Field(primary_key=primary.lower() == 'pri', length=length)
+        return type(tablename, (Model,), fields)
 
 
 def connect(*args, **kwargs):

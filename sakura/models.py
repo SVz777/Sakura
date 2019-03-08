@@ -1,7 +1,6 @@
 from .exception import SakuraException
 from .meta import ModelMetaclass
 
-
 class Model(dict, metaclass=ModelMetaclass):
 
     def __init__(self, **kw):
@@ -15,7 +14,7 @@ class Model(dict, metaclass=ModelMetaclass):
             else:
                 return self.__dict__[key]
         except KeyError:
-            raise AttributeError(r"'Model' object has no attribute '%s'" % key)
+            raise AttributeError(r"'Model' object has no field '%s'" % key)
 
     def __setattr__(self, key, value):
         if key in self.__mappings__:
