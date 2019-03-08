@@ -1,6 +1,7 @@
 from .exception import SakuraException
 from .meta import ModelMetaclass
 
+
 class Model(dict, metaclass=ModelMetaclass):
 
     def __init__(self, **kw):
@@ -21,7 +22,7 @@ class Model(dict, metaclass=ModelMetaclass):
             self.modify = True
             self[key] = value
         else:
-            self.__dict__[key]=value
+            self.__dict__[key] = value
 
     def Create(self):
         field_value = dict(self)
@@ -56,5 +57,5 @@ class Model(dict, metaclass=ModelMetaclass):
         self.update(info)
 
     @classmethod
-    def Fetch(cls, cond=None):
-        return cls.connection.select(cls, cond)
+    def Fetch(cls, cond=None, group_by=None, order_by=None, limit=100, fields=None):
+        return cls.connection.select(cls, cond, group_by, order_by, limit, fields)

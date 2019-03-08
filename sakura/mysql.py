@@ -8,7 +8,6 @@ from .models import Model
 class SakuraMysql:
     def __init__(self, *args, **kwargs) -> None:
         self.conn =  pymysql.connect(*args, **kwargs)
-        self.debug = False
 
     def _sql(self, query, args):
         """获取sql语句"""
@@ -27,9 +26,6 @@ class SakuraMysql:
                 f'VALUES ({", ".join(["%s"]*len(_args))})'
             ]
         )
-        if self.debug:
-            print('insert')
-            return self._sql(_sql, _args)
         try:
             cur = self.execute(_sql, _args,True)
             if cur:
@@ -51,9 +47,6 @@ class SakuraMysql:
                 _field_value,
                 _where]
         )
-        if self.debug:
-            print('update')
-            return self._sql(_sql, _args)
         try:
             if self.execute(_sql, _args,True):
                 return True
@@ -71,9 +64,6 @@ class SakuraMysql:
                 _where,
             ]
         )
-        if self.debug:
-            print('delete')
-            return self._sql(_sql, _args)
         try:
             cur = self.execute(_sql, _args,True)
             if cur:
@@ -103,10 +93,6 @@ class SakuraMysql:
                 _limit
             ]
         )
-        if self.debug:
-            print('select')
-
-            return self._sql(_sql, _args)
         try:
             l = self.execute(_sql, _args)
             models = []
@@ -117,17 +103,12 @@ class SakuraMysql:
             raise SakuraException(e)
 
     def select_one(self, model, cond=None, group_by=None, order_by=None, fields=None):
-        if self.debug:
-            print('select_one')
         models = self.select(model, cond, group_by, order_by, 1, fields)
         if models:
             return models[0]
         return {}
 
     def execute(self, query, args=None,commit=False):
-        if self.debug:
-            print('execute')
-            return self._sql(query, args)
         try:
             cur = self.conn.cursor()
             cur.execute(query, args)
@@ -140,9 +121,6 @@ class SakuraMysql:
             raise SakuraException(e)
 
     def execute_many(self, query, args=None):
-        if self.debug:
-            print('execute_many')
-            return self._sql(query, args)
         try:
             cur = self.conn.cursor()
             cur.executemany(query, args)
@@ -156,11 +134,12 @@ class SakuraMysql:
         fields = {
             'connection': self
         }
-        for i in (self.execute(f'show full columns from {tablename}')):
+
+        for i in self.execute(f'show full columns from {tablename}'):
             field_name, field_type, _, _, primary, *_ = i
             Field, length = SqlUtil.getField(field_type)
             fields[field_name] = Field(primary_key=primary.lower() == 'pri', length=length)
-        return type(tablename, (Model,), fields)
+        return type(tablename.title(), (Model,), fields)
 
 
 def connect(*args, **kwargs):

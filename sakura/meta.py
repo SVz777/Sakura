@@ -1,5 +1,4 @@
 from .fields import Field
-from .mysql import SakuraMysql
 
 
 class ModelMetaclass(type):
@@ -14,7 +13,7 @@ class ModelMetaclass(type):
                 if v.primary_key:
                     pk = k
                 mappings[k] = v
-            elif k == 'connection' and isinstance(v, SakuraMysql):
+            elif k == 'connection':
                 obj = v
         for k in mappings.keys():
             attrs.pop(k)

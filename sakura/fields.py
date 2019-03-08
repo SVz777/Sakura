@@ -26,6 +26,11 @@ class BaseIntField(Field):
         return 0
 
 
+class IntField(BaseIntField):
+    def __init__(self, length, *args, **kwargs):
+        super().__init__(f'int({length})', int, *args, **kwargs)
+
+
 class BigIntField(BaseIntField):
     def __init__(self, length, *args, **kwargs):
         super().__init__(f'bigint({length})', int, *args, **kwargs)

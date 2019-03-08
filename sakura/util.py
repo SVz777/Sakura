@@ -91,7 +91,9 @@ class SqlUtil:
 
     @staticmethod
     def getField(field_type: str):
-        if field_type.lower().startswith('bigint'):
+        if field_type.lower().startswith('int'):
+            field = fields.IntField
+        elif field_type.lower().startswith('bigint'):
             field = fields.BigIntField
         elif field_type.lower().startswith('varchar'):
             field = fields.VarcharField
@@ -101,5 +103,5 @@ class SqlUtil:
             field = fields.DoubleField
         else:
             raise NotImplementedError(f'this type todo:{field_type}')
-        length = re.search(r'\((\d+)\)', field_type).group(1)
+        length = re.search(r'(\d+)', field_type).group(1)
         return field, length
