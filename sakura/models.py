@@ -2,6 +2,7 @@ from .exception import SakuraException
 from .meta import ModelMetaclass
 from .log import logger
 
+
 class Model(dict, metaclass=ModelMetaclass):
 
     def __init__(self, **kw):
@@ -20,12 +21,13 @@ class Model(dict, metaclass=ModelMetaclass):
     def __setattr__(self, key, value):
         if key in self.__mappings__:
             self.modify = True
-            if self.__mappings__[key].validate():
-                self[key] = value
-            else:
-                logger.error('data validation failed')
+            self[key] = value
         else:
             self.__dict__[key] = value
+
+    def __repr__(self):
+        s = [f'{k}({self.__mappings__[k].field_type}):{v}' for k,v in self.items()]
+        return '\n'.join(s)
 
     def Create(self):
         field_value = dict(self)

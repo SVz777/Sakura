@@ -91,12 +91,14 @@ class SqlUtil:
 
     @staticmethod
     def getField(field_type: str):
-        if field_type in fields.string_list or field_type in fields.datetime_list:
+        if field_type in fields.string_list:
             field = fields.BaseString
         elif field_type in fields.int_list:
             field = fields.BaseInt
         elif field_type in fields.float_list:
             field = fields.BaseFloat
+        elif field_type in fields.datetime_list:
+            field = fields.BaseDateTime
         else:
             logger.warning(f'This type:{field_type} is not supported,use default type:varchar')
             field = fields.BaseString

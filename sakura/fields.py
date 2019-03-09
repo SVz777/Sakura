@@ -24,10 +24,6 @@ class Field(object):
         self.character_maximum_length = character_maximum_length
         self.character_octet_length = character_octet_length
 
-    def validate(self):
-        # todo
-        return True
-
 
 class BaseString(Field):
     def __init__(self, field_type, *args, **kwargs):
@@ -42,6 +38,11 @@ class BaseInt(Field):
 class BaseFloat(Field):
     def __init__(self, field_type, *args, **kwargs):
         super().__init__(field_type, float, *args, **kwargs)
+
+
+class BaseDateTime(Field):
+    def __init__(self, field_type, *args, **kwargs):
+        super().__init__(field_type, str, *args, **kwargs)
 
 
 # 字符

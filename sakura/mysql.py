@@ -144,7 +144,7 @@ class SakuraMysql:
         for i in self.execute(sql):
             field_name, field_type, is_nullable, primary, default, extra, numeric_precision, numeric_scale, character_maximum_length, character_octet_length = i
             Field = SqlUtil.getField(field_type)
-            fields[field_name] = Field(field_type, primary_key=primary.lower() == 'pri')
+            fields[field_name] = Field(field_type,is_nullable=is_nullable, primary_key=primary.lower() == 'pri',default=default,extra=extra,numeric_precision=numeric_precision,numeric_scale=numeric_scale,character_maximum_length=character_maximum_length,character_octet_length=character_octet_length)
         return type(tablename.title(), (Model,), fields)
 
 
