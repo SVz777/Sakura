@@ -91,18 +91,13 @@ class SqlUtil:
 
     @staticmethod
     def getField(field_type: str):
-        if field_type.lower().startswith('int'):
-            field = fields.IntField
-        elif field_type.lower().startswith('bigint'):
-            field = fields.BigIntField
-        elif field_type.lower().startswith('varchar'):
-            field = fields.VarcharField
-        elif field_type.lower().startswith('float'):
-            field = fields.FloatField
-        elif field_type.lower().startswith('double'):
-            field = fields.DoubleField
+        if field_type in fields.string_list or field_type in fields.datetime_list:
+            field = fields.BaseString
+        elif field_type in fields.int_list:
+            field = fields.BaseInt
+        elif field_type in fields.float_list:
+            field = fields.BaseFloat
         else:
-            field = fields.VarcharField
-            logger.warning(f"the type:{field_type} todo,use default type:varchar")
-        length = re.search(r'(\d+)', field_type).group(1)
-        return field, length
+            logger.warning(f'This type:{field_type} is not supported,use default type:varchar')
+            field = fields.BaseString
+        return field

@@ -1,57 +1,65 @@
 class Field(object):
-    def __init__(self, column_type, convert, *, primary_key=False):
-        self.column_type = column_type
+    __slots__ = (
+        'field_type',
+        'convert',
+        'is_nullable',
+        'primary_key',
+        'default',
+        'extra',
+        'numeric_precision',
+        'numeric_scale',
+        'character_maximum_length',
+        'character_octet_length'
+    )
+
+    def __init__(self, field_type, convert, *, is_nullable=True, primary_key=False, default=None, extra=None, numeric_precision=None, numeric_scale=None, character_maximum_length=None, character_octet_length=None):
+        self.field_type = field_type
         self.convert = convert
+        self.is_nullable = is_nullable
         self.primary_key = primary_key
+        self.default = default
+        self.extra = extra
+        self.numeric_precision = numeric_precision
+        self.numeric_scale = numeric_scale
+        self.character_maximum_length = character_maximum_length
+        self.character_octet_length = character_octet_length
 
-    @classmethod
-    def default_value(cls):
-        raise NotImplementedError
-
-
-class BaseStringField(Field):
-    @classmethod
-    def default_value(cls):
-        return ''
-
-
-class VarcharField(BaseStringField):
-    def __init__(self, length, *args, **kwargs):
-        super().__init__(f'varchar({length})', str, *args, **kwargs)
+    def validate(self):
+        # todo
+        return True
 
 
-class BaseIntField(Field):
-    @classmethod
-    def default_value(cls):
-        return 0
+class BaseString(Field):
+    def __init__(self, field_type, *args, **kwargs):
+        super().__init__(field_type, str, *args, **kwargs)
 
 
-class IntField(BaseIntField):
-    def __init__(self, length, *args, **kwargs):
-        super().__init__(f'int({length})', int, *args, **kwargs)
+class BaseInt(Field):
+    def __init__(self, field_type, *args, **kwargs):
+        super().__init__(field_type, int, *args, **kwargs)
 
 
-class BigIntField(BaseIntField):
-    def __init__(self, length, *args, **kwargs):
-        super().__init__(f'bigint({length})', int, *args, **kwargs)
+class BaseFloat(Field):
+    def __init__(self, field_type, *args, **kwargs):
+        super().__init__(field_type, float, *args, **kwargs)
 
 
-class TinyIntField(BaseIntField):
-    def __init__(self, length, *args, **kwargs):
-        super().__init__(f'tinyint({length})', int, *args, **kwargs)
-
-
-class BaseFloatField(Field):
-    @classmethod
-    def default_value(cls):
-        return .0
-
-
-class FloatField(BaseFloatField):
-    def __init__(self, length, *args, **kwargs):
-        super().__init__(f'float({length})', float, *args, **kwargs)
-
-
-class DoubleField(BaseFloatField):
-    def __init__(self, length, *args, **kwargs):
-        super().__init__(f'double({length})', float, *args, **kwargs)
+# 字符
+string_list = [
+    'char', 'varchar',
+    'text', 'tinytext', 'mediumtext', 'longtext',
+    'blob', 'tinyblob', 'mediumblob', 'longblob',
+    'enum',
+]
+# 数值
+int_list = [
+    'int', 'integer', 'tinyint', 'smallint', 'mediumint', 'bigint',
+]
+# 浮点
+float_list = [
+    'float', 'double', 'decimal'
+]
+# 日期时间
+datetime_list = [
+    'date', 'time', 'year', 'datetime', 'timestamp',
+]

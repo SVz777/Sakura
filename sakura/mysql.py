@@ -5,9 +5,10 @@ from .exception import SakuraException
 from .log import logger
 from .models import Model
 
+
 class SakuraMysql:
     def __init__(self, *args, **kwargs) -> None:
-        self.conn =  pymysql.connect(*args, **kwargs)
+        self.conn = pymysql.connect(*args, **kwargs)
 
     def _sql(self, query, args):
         """获取sql语句"""
@@ -27,7 +28,7 @@ class SakuraMysql:
             ]
         )
         try:
-            cur = self.execute(_sql, _args,True)
+            cur = self.execute(_sql, _args, True)
             if cur:
                 return cur.lastrowid
             else:
@@ -48,7 +49,7 @@ class SakuraMysql:
                 _where]
         )
         try:
-            if self.execute(_sql, _args,True):
+            if self.execute(_sql, _args, True):
                 return True
             else:
                 return False
@@ -65,7 +66,7 @@ class SakuraMysql:
             ]
         )
         try:
-            cur = self.execute(_sql, _args,True)
+            cur = self.execute(_sql, _args, True)
             if cur:
                 return True
             else:
@@ -108,11 +109,11 @@ class SakuraMysql:
             return models[0]
         return {}
 
-    def execute(self, query, args=None,commit=False):
+    def execute(self, query, args=None, commit=False):
         try:
             cur = self.conn.cursor()
             cur.execute(query, args)
-            logger.debug('sql:%s',self._sql(query, args))
+            logger.debug('sql:%s', self._sql(query, args))
             if commit:
                 self.conn.commit()
                 return cur
@@ -124,21 +125,26 @@ class SakuraMysql:
         try:
             cur = self.conn.cursor()
             cur.executemany(query, args)
-            logger.debug('sql:%s',self._sql(query, args))
+            logger.debug('sql:%s', self._sql(query, args))
             self.conn.commit()
             return cur.fetchall()
         except Exception as e:
             raise SakuraException(e)
 
-    def getModel(self,tablename):
+    def getModel(self, tablename):
         fields = {
             'connection': self
         }
-
-        for i in self.execute(f'show full columns from {tablename}'):
-            field_name, field_type, _, _, primary, *_ = i
-            Field, length = SqlUtil.getField(field_type)
-            fields[field_name] = Field(primary_key=primary.lower() == 'pri', length=length)
+        sql = f'''
+        select COLUMN_NAME,DATA_TYPE,IS_NULLABLE,COLUMN_KEY,COLUMN_DEFAULT,EXTRA,NUMERIC_PRECISION,NUMERIC_SCALE,CHARACTER_MAXIMUM_LENGTH,CHARACTER_OCTET_LENGTH from information_schema.COLUMNS
+        where TABLE_SCHEMA = '{self.conn.db.decode()}' 
+        and TABLE_NAME = '{tablename}'
+        order by ORDINAL_POSITION; 
+        '''
+        for i in self.execute(sql):
+            field_name, field_type, is_nullable, primary, default, extra, numeric_precision, numeric_scale, character_maximum_length, character_octet_length = i
+            Field = SqlUtil.getField(field_type)
+            fields[field_name] = Field(field_type, primary_key=primary.lower() == 'pri')
         return type(tablename.title(), (Model,), fields)
 
 
