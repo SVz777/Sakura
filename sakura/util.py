@@ -2,7 +2,7 @@ import re
 
 from .exception import SakuraException
 from . import fields
-
+from .log import logger
 
 class SqlUtil:
     @staticmethod
@@ -102,6 +102,7 @@ class SqlUtil:
         elif field_type.lower().startswith('double'):
             field = fields.DoubleField
         else:
-            raise NotImplementedError(f'this type todo:{field_type}')
+            field = fields.VarcharField
+            logger.warning(f"the type:{field_type} todo,use default type:varchar")
         length = re.search(r'(\d+)', field_type).group(1)
         return field, length
