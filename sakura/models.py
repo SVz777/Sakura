@@ -11,46 +11,46 @@ class Model(dict, metaclass=ModelMetaclass):
 
     def __getattr__(self, key):
         try:
-            if key in self.__mappings__:
-                return self.__mappings__[key].convert(self[key])  # .value()
+            if key in self.fields:
+                return self.fields[key].convert(self[key])  # .value()
             else:
                 return self.__dict__[key]
         except KeyError:
             raise AttributeError(r"'Model' object has no field '%s'" % key)
 
     def __setattr__(self, key, value):
-        if key in self.__mappings__:
+        if key in self.fields:
             self.modify = True
             self[key] = value
         else:
             self.__dict__[key] = value
 
     def __repr__(self):
-        s = [f'{k}({self.__mappings__[k].field_type}):{v}' for k,v in self.items()]
+        s = [f'{k}({self.fields[k].field_type}):{v}' for k,v in self.items()]
         return '\n'.join(s)
 
     def Create(self):
         field_value = dict(self)
         id = self.connection.insert(self.__class__, field_value)
-        self[self.__primary__] = id
+        self[self.primary_key] = id
 
     def Update(self):
         if not self.modify:
             return
-        if self.__primary__ not in self:
+        if self.primary_key not in self:
             raise SakuraException('primary key is empty')
         cond = [[
-            [self.__primary__, '=', self[self.__primary__]]
+            [self.primary_key, '=', self[self.primary_key]]
         ]]
         field_value = dict(self)
-        field_value.pop(self.__primary__)
+        field_value.pop(self.primary_key)
         return self.connection.update(self.__class__, field_value, cond)
 
     def Delete(self):
-        if self.__primary__ not in self:
+        if self.primary_key not in self:
             raise SakuraException('primary key is empty')
         cond = [[
-            [self.__primary__, '=', self[self.__primary__]]
+            [self.primary_key, '=', self[self.primary_key]]
         ]]
         return self.connection.delete(self.__class__, cond)
 

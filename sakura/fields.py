@@ -3,7 +3,7 @@ class Field(object):
         'field_type',
         'convert',
         'is_nullable',
-        'primary_key',
+        'is_primary_key',
         'default',
         'extra',
         'numeric_precision',
@@ -12,11 +12,11 @@ class Field(object):
         'character_octet_length'
     )
 
-    def __init__(self, field_type, convert, *, is_nullable=True, primary_key=False, default=None, extra=None, numeric_precision=None, numeric_scale=None, character_maximum_length=None, character_octet_length=None):
+    def __init__(self, field_type, convert, *, is_nullable=True, is_primary_key=False, default=None, extra=None, numeric_precision=None, numeric_scale=None, character_maximum_length=None, character_octet_length=None):
         self.field_type = field_type
         self.convert = convert
         self.is_nullable = is_nullable
-        self.primary_key = primary_key
+        self.is_primary_key = is_primary_key
         self.default = default
         self.extra = extra
         self.numeric_precision = numeric_precision

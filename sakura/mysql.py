@@ -22,7 +22,7 @@ class SakuraMysql:
         _sql = SqlUtil.format_sql(
             [
                 'INSERT INTO',
-                f'`{model.__table__}`',
+                f'`{model.table}`',
                 f'({_fields})',
                 f'VALUES ({", ".join(["%s"]*len(_args))})'
             ]
@@ -43,7 +43,7 @@ class SakuraMysql:
         _sql = SqlUtil.format_sql(
             [
                 'UPDATE',
-                f'`{model.__table__}`',
+                f'`{model.table}`',
                 'SET',
                 _field_value,
                 _where]
@@ -61,7 +61,7 @@ class SakuraMysql:
         _sql = SqlUtil.format_sql(
             [
                 'DELETE FROM',
-                f'`{model.__table__}`',
+                f'`{model.table}`',
                 _where,
             ]
         )
@@ -77,7 +77,7 @@ class SakuraMysql:
     def select(self, model, cond=None, group_by=None, order_by=None, limit=100, fields=None):
         _fields = SqlUtil.get_fields(fields)
         if not fields:
-            fields = model.__mappings__
+            fields = model.fields
         _where, _args = SqlUtil.get_where(cond)
         _group_by = SqlUtil.get_groupby(group_by)
         _order_by = SqlUtil.get_orderby(order_by)
@@ -87,7 +87,7 @@ class SakuraMysql:
                 'SELECT',
                 _fields,
                 'FROM',
-                f'`{model.__table__}`',
+                f'`{model.table}`',
                 _where,
                 _group_by,
                 _order_by,
@@ -144,7 +144,7 @@ class SakuraMysql:
         for i in self.execute(sql):
             field_name, field_type, is_nullable, primary, default, extra, numeric_precision, numeric_scale, character_maximum_length, character_octet_length = i
             Field = SqlUtil.getField(field_type)
-            fields[field_name] = Field(field_type,is_nullable=is_nullable, primary_key=primary.lower() == 'pri',default=default,extra=extra,numeric_precision=numeric_precision,numeric_scale=numeric_scale,character_maximum_length=character_maximum_length,character_octet_length=character_octet_length)
+            fields[field_name] = Field(field_type, is_nullable=is_nullable, is_primary_key=primary.lower() == 'pri', default=default, extra=extra, numeric_precision=numeric_precision, numeric_scale=numeric_scale, character_maximum_length=character_maximum_length, character_octet_length=character_octet_length)
         return type(tablename.title(), (Model,), fields)
 
 
