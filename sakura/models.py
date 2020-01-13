@@ -3,16 +3,16 @@ from .meta import ModelMetaclass
 from .log import logger
 
 
-class Model(dict, metaclass=ModelMetaclass):
+class Model(metaclass=ModelMetaclass):
 
     def __init__(self, **kw):
-        super().__init__(**kw)
+        self.values = kw
         self.modify = False
 
     def __getattr__(self, key):
         try:
             if key in self.fields:
-                return self.fields[key].convert(self[key])  # .value()
+                return self.fields[key].convert(self.values[key])  # .value()
             else:
                 return self.__dict__[key]
         except KeyError:
@@ -21,18 +21,18 @@ class Model(dict, metaclass=ModelMetaclass):
     def __setattr__(self, key, value):
         if key in self.fields:
             self.modify = True
-            self[key] = value
+            self.values[key] = value
         else:
             self.__dict__[key] = value
 
     def __repr__(self):
-        s = [f'{k}({self.fields[k].field_type}):{v}' for k,v in self.items()]
+        s = [f'{k}({self.fields[k].field_type}):{v}' for k,v in self.values.items()]
         return '\n'.join(s)
 
     def Create(self):
-        field_value = dict(self)
+        field_value = dict(self.values)
         id = self.connection.insert(self.__class__, field_value)
-        self[self.primary_key] = id
+        self.values[self.primary_key] = id
 
     def Update(self):
         if not self.modify:
@@ -40,9 +40,9 @@ class Model(dict, metaclass=ModelMetaclass):
         if self.primary_key not in self:
             raise SakuraException('primary key is empty')
         cond = [[
-            [self.primary_key, '=', self[self.primary_key]]
+            [self.primary_key, '=', self.values[self.primary_key]]
         ]]
-        field_value = dict(self)
+        field_value = dict(self.values)
         field_value.pop(self.primary_key)
         return self.connection.update(self.__class__, field_value, cond)
 
@@ -50,16 +50,16 @@ class Model(dict, metaclass=ModelMetaclass):
         if self.primary_key not in self:
             raise SakuraException('primary key is empty')
         cond = [[
-            [self.primary_key, '=', self[self.primary_key]]
+            [self.primary_key, '=', self.values[self.primary_key]]
         ]]
         return self.connection.delete(self.__class__, cond)
 
     def Get(self):
         cond = [[
-            [k, '=', v] for k, v in self.items()
+            [k, '=', v] for k, v in self.values.items()
         ]]
         info = self.connection.select_one(self.__class__, cond)
-        self.update(info)
+        self.values.update(info.values)
 
     @classmethod
     def Fetch(cls, cond=None, group_by=None, order_by=None, limit=100, fields=None):
