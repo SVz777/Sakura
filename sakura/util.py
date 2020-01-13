@@ -1,8 +1,7 @@
-import re
-
 from .exception import SakuraException
 from . import fields
 from .log import logger
+
 
 class SqlUtil:
     @staticmethod
