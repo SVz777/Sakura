@@ -24,6 +24,19 @@ class Field(object):
         self.character_maximum_length = character_maximum_length
         self.character_octet_length = character_octet_length
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}(" \
+               + f"'{self.field_type}'," \
+               + f"is_nullable={self.is_nullable}," \
+               + f"is_primary_key={self.is_primary_key}," \
+               + f"default={self.default}," \
+               + ('extra=None,' if self.extra == '' else f"extra='{self.extra}',") \
+               + f"numeric_precision={self.numeric_precision}," \
+               + f"numeric_scale={self.numeric_scale}," \
+               + f"character_maximum_length={self.character_maximum_length}," \
+               + f"character_octet_length={self.character_octet_length}" \
+               + f")"
+
 
 class BaseString(Field):
     def __init__(self, field_type, *args, **kwargs):
