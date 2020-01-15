@@ -25,4 +25,4 @@ class LoggingFactory:
         return logging.getLogger(self.name)
 
 
-logger = LoggingFactory('sakura',stdout=True).logger
+logger = LoggingFactory('sakura', stdout=True).logger

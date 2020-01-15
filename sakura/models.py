@@ -26,7 +26,7 @@ class Model(metaclass=ModelMetaclass):
             self.__dict__[key] = value
 
     def __repr__(self):
-        s = [f'{k}({self.fields[k].field_type}):{v}' for k,v in self.values.items()]
+        s = [f'{k}({self.fields[k].field_type}):{v}' for k, v in self.values.items()]
         return '\n'.join(s)
 
     def Create(self):

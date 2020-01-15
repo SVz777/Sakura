@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='SakuraMysql',
@@ -12,10 +12,10 @@ setup(
     maintainer='SVz',
     maintainer_email='<903943711@qq.com',
     license='MIT License',
-    packages=['sakura','tests'],
+    packages=['sakura', 'tests'],
     package_dir={
         'sakura': 'sakura',
-        'tests':'tests'
+        'tests': 'tests',
     },
     install_requires=['pymysql'],
     python_requires='>=3.6',

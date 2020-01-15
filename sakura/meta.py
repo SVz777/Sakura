@@ -4,7 +4,7 @@ from .fields import Field
 
 
 class ModelMetaclass(abc.ABCMeta):
-    def __new__(mcs,name, bases, attrs):
+    def __new__(mcs, name, bases, attrs):
         if name == 'Model':
             return super().__new__(mcs, name, bases, attrs)
         fields = dict()
