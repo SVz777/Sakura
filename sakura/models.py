@@ -7,7 +7,7 @@ class Model(metaclass=ModelMetaclass):
 
     def __init__(self, **kw):
         self.values = kw
-        self.modify = False
+        self.modify_fields = []
 
     def __getattr__(self, key):
         try:
@@ -20,8 +20,8 @@ class Model(metaclass=ModelMetaclass):
 
     def __setattr__(self, key, value):
         if key in self.fields:
-            self.modify = True
             self.values[key] = value
+            self.modify_fields.append(key)
         else:
             self.__dict__[key] = value
 
@@ -35,19 +35,30 @@ class Model(metaclass=ModelMetaclass):
         self.values[self.primary_key] = id
 
     def Update(self):
-        if not self.modify:
+        if not self.modify_fields:
             return
-        if self.primary_key not in self:
+
+        if self.primary_key not in self.values:
             raise SakuraException('primary key is empty')
+
         cond = [[
             [self.primary_key, '=', self.values[self.primary_key]]
         ]]
-        field_value = dict(self.values)
-        field_value.pop(self.primary_key)
-        return self.connection.update(self.__class__, field_value, cond)
+
+        field_value = {}
+        for k in self.modify_fields:
+            if k == self.primary_key:
+                continue
+            field_value[k] = self.values[k]
+
+        if self.connection.update(self.__class__, field_value, cond):
+            self.modify_fields.clear()
+            return True
+
+        return False
 
     def Delete(self):
-        if self.primary_key not in self:
+        if self.primary_key not in self.values:
             raise SakuraException('primary key is empty')
         cond = [[
             [self.primary_key, '=', self.values[self.primary_key]]

@@ -112,8 +112,8 @@ class SakuraMysql:
     def execute(self, query, args=None, commit=False):
         try:
             cur = self.conn.cursor()
-            cur.execute(query, args)
             logger.debug('sql:%s', self._sql(query, args))
+            cur.execute(query, args)
             if commit:
                 self.conn.commit()
                 return cur
@@ -124,8 +124,8 @@ class SakuraMysql:
     def execute_many(self, query, args=None):
         try:
             cur = self.conn.cursor()
-            cur.executemany(query, args)
             logger.debug('sql:%s', self._sql(query, args))
+            cur.executemany(query, args)
             self.conn.commit()
             return cur.fetchall()
         except Exception as e:
