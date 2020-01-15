@@ -12,10 +12,9 @@ setup(
     maintainer='SVz',
     maintainer_email='<903943711@qq.com',
     license='MIT License',
-    packages=['sakura', 'tests'],
+    packages=['sakura'],
     package_dir={
         'sakura': 'sakura',
-        'tests': 'tests',
     },
     install_requires=['pymysql'],
     python_requires='>=3.6',
