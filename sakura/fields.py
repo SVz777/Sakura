@@ -2,6 +2,7 @@ class Field(object):
     __slots__ = (
         'field_type',
         'convert',
+        'field_comment',
         'is_nullable',
         'is_primary_key',
         'default',
@@ -12,9 +13,10 @@ class Field(object):
         'character_octet_length'
     )
 
-    def __init__(self, field_type, convert, *, is_nullable=True, is_primary_key=False, default=None, extra=None, numeric_precision=None, numeric_scale=None, character_maximum_length=None, character_octet_length=None):
+    def __init__(self, field_type, convert, *, field_comment=None,is_nullable=True, is_primary_key=False, default=None, extra=None, numeric_precision=None, numeric_scale=None, character_maximum_length=None, character_octet_length=None):
         self.field_type = field_type
         self.convert = convert
+        self.field_comment = field_comment
         self.is_nullable = is_nullable
         self.is_primary_key = is_primary_key
         self.default = default
@@ -27,6 +29,7 @@ class Field(object):
     def __repr__(self):
         return f"{self.__class__.__name__}(" \
                + f"'{self.field_type}'," \
+               + f"'{self.field_comment}'," \
                + f"is_nullable={self.is_nullable}," \
                + f"is_primary_key={self.is_primary_key}," \
                + f"default={self.default}," \

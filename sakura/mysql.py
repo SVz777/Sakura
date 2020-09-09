@@ -136,16 +136,17 @@ class SakuraMysql:
             'connection': self
         }
         sql = f'''
-        select COLUMN_NAME,DATA_TYPE,IS_NULLABLE,COLUMN_KEY,COLUMN_DEFAULT,EXTRA,NUMERIC_PRECISION,NUMERIC_SCALE,CHARACTER_MAXIMUM_LENGTH,CHARACTER_OCTET_LENGTH from information_schema.COLUMNS
+        select COLUMN_NAME,COLUMN_COMMENT,DATA_TYPE,IS_NULLABLE,COLUMN_KEY,COLUMN_DEFAULT,EXTRA,NUMERIC_PRECISION,NUMERIC_SCALE,CHARACTER_MAXIMUM_LENGTH,CHARACTER_OCTET_LENGTH from information_schema.COLUMNS
         where TABLE_SCHEMA = '{self.conn.db.decode()}' 
         and TABLE_NAME = '{tablename}'
         order by ORDINAL_POSITION; 
         '''
         for i in self.execute(sql):
-            field_name, field_type, is_nullable, primary, default, extra, numeric_precision, numeric_scale, character_maximum_length, character_octet_length = i
+            field_name, field_comment,field_type, is_nullable, primary, default, extra, numeric_precision, numeric_scale, character_maximum_length, character_octet_length = i
             Field = SqlUtil.getField(field_type)
             fields[field_name] = Field(
                 field_type,
+                field_comment=field_comment,
                 is_nullable=is_nullable.lower() == 'yes',
                 is_primary_key=primary.lower() == 'pri',
                 default=default,
