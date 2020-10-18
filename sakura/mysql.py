@@ -136,14 +136,17 @@ class SakuraMysql:
             'connection': self
         }
         sql = f'''
-        select COLUMN_NAME,COLUMN_COMMENT,DATA_TYPE,IS_NULLABLE,COLUMN_KEY,COLUMN_DEFAULT,EXTRA,NUMERIC_PRECISION,NUMERIC_SCALE,CHARACTER_MAXIMUM_LENGTH,CHARACTER_OCTET_LENGTH from information_schema.COLUMNS
-        where TABLE_SCHEMA = '{self.conn.db.decode()}' 
-        and TABLE_NAME = '{tablename}'
+       select t.TABLE_COMMENT,c.COLUMN_NAME,c.COLUMN_COMMENT,c.DATA_TYPE,c.IS_NULLABLE,c.COLUMN_KEY,c.COLUMN_DEFAULT,c.EXTRA,c.NUMERIC_PRECISION,c.NUMERIC_SCALE,c.CHARACTER_MAXIMUM_LENGTH,c.CHARACTER_OCTET_LENGTH from information_schema.COLUMNS as c,information_schema.TABLES as t
+        where c.TABLE_SCHEMA = '{self.conn.db.decode()}'
+          and c.TABLE_NAME = '{tablename}'
+          and t.TABLE_SCHEMA = '{self.conn.db.decode()}'
+          and t.TABLE_NAME = '{tablename}'
         order by ORDINAL_POSITION; 
         '''
         for i in self.execute(sql):
-            field_name, field_comment,field_type, is_nullable, primary, default, extra, numeric_precision, numeric_scale, character_maximum_length, character_octet_length = i
+            table_comment, field_name, field_comment, field_type, is_nullable, primary, default, extra, numeric_precision, numeric_scale, character_maximum_length, character_octet_length = i
             Field = SqlUtil.getField(field_type)
+            fields['table_comment'] = table_comment
             fields[field_name] = Field(
                 field_type,
                 field_comment=field_comment,

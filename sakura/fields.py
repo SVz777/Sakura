@@ -13,7 +13,7 @@ class Field(object):
         'character_octet_length'
     )
 
-    def __init__(self, field_type, convert, *, field_comment=None,is_nullable=True, is_primary_key=False, default=None, extra=None, numeric_precision=None, numeric_scale=None, character_maximum_length=None, character_octet_length=None):
+    def __init__(self, field_type, convert, *, field_comment=None, is_nullable=True, is_primary_key=False, default=None, extra=None, numeric_precision=None, numeric_scale=None, character_maximum_length=None, character_octet_length=None):
         self.field_type = field_type
         self.convert = convert
         self.field_comment = field_comment
